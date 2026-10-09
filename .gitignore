@@ -1,0 +1,5 @@
+.idea/
+*.iml
+__MACOSX/
+build/
+.gradle/
