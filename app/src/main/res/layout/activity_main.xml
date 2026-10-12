@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center_horizontal">
+
+    <!-- Vista de texto para el identificador del proceso -->
+    <TextView
+        android:id="@+id/tvPid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:text="PID de la actividad:"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Botón para iniciar el servicio en primer plano -->
+    <Button
+        android:id="@+id/btnIniciar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:text="Iniciar Descarga" />
+
+    <!-- Botón para detener el servicio en primer plano -->
+    <Button
+        android:id="@+id/btnParar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Parar Descarga" />
+
+</LinearLayout>
