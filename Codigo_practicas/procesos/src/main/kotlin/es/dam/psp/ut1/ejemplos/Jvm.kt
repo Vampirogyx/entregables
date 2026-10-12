@@ -1,4 +1,4 @@
-package es.dam.psp.ut1
+package es.dam.psp.ut1.ejemplos
 
 /**
  * Jvm.kt · objeto auxiliar para lanzar otra clase de este proyecto como proceso hijo.

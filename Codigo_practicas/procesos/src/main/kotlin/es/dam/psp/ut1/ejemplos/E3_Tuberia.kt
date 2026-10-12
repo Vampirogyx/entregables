@@ -1,6 +1,6 @@
 package es.dam.psp.ut1.ejemplos
 
-import es.dam.psp.ut1.Jvm
+import es.dam.psp.ut1.ejemplos.Jvm
 
 /**
  * E3 · Comunicación padre ↔ hijo con tuberías (pipes).

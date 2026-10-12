@@ -1,6 +1,6 @@
 package es.dam.psp.ut1.ejemplos
 
-import es.dam.psp.ut1.Jvm
+import es.dam.psp.ut1.ejemplos.Jvm
 
 /**
  * E2 · Capturar (leer) la salida de un proceso hijo.
