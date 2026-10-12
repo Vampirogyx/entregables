@@ -33,25 +33,59 @@ const val CLASE_HIJO = "es.dam.psp.ut1.practicas.ContadorKt"   // main de Contad
  * Pista: Jvm.proceso(...) y redirectInput(...). Hereda la salida de error del hijo.
  */
 fun lanzarContador(fichero: File): Process {
-    TODO("Práctica 4.a")   // TODO 4.a
-}
+    val pb = when (val comandoJvm = Jvm.proceso(CLASE_HIJO)) {
+        is ProcessBuilder -> comandoJvm
+        is List<*> -> ProcessBuilder(comandoJvm.map { it.toString() })
+        else -> ProcessBuilder(comandoJvm.toString())
+    }
 
+    pb.redirectInput(fichero)
+    pb.redirectError(ProcessBuilder.Redirect.INHERIT)
+    return pb.start()
+}
 /**
  * Lee la línea que ha escrito el hijo, espera a que termine y construye el Resultado.
  * Si el código de salida no es 0, lanza una IllegalStateException con un mensaje claro.
  */
 fun recogerResultado(fichero: File, hijo: Process): Resultado {
-    TODO("Práctica 4.b")   // TODO 4.b
+    val linea = hijo.inputStream.bufferedReader().readLine()
+
+    val codigoSalida = hijo.waitFor()
+    if (codigoSalida != 0) {
+        throw IllegalStateException("El proceso hijo falló para el fichero '${fichero.name}' con código: $codigoSalida")
+    }
+
+    if (linea.isNullOrBlank()) {
+        throw IllegalStateException("El proceso hijo para '${fichero.name}' no devolvió datos válidos.")
+    }
+
+    val partes = linea.split(";")
+    return Resultado(
+        fichero = fichero.name,
+        lineas = partes[0].toLong(),
+        palabras = partes[1].toLong(),
+        caracteres = partes[2].toLong(),
+        masFrecuente = partes[3]
+    )
 }
 
 /** Procesa los ficheros uno detrás de otro: lanzar, esperar, lanzar, esperar... */
 fun secuencial(ficheros: List<File>): List<Resultado> {
-    TODO("Práctica 4.c")   // TODO 4.c
+    return ficheros.map { fichero ->
+        val proceso = lanzarContador(fichero)
+        recogerResultado(fichero, proceso)
+    }
 }
 
 /** Lanza TODOS los hijos a la vez y después recoge los resultados. */
 fun concurrente(ficheros: List<File>): List<Resultado> {
-    TODO("Práctica 4.d")   // TODO 4.d
+    val procesosAsociados = ficheros.map { fichero ->
+        fichero to lanzarContador(fichero)
+    }
+
+    return procesosAsociados.map { (fichero, proceso) ->
+        recogerResultado(fichero, proceso)
+    }
 }
 
 fun main() {
@@ -71,6 +105,30 @@ fun main() {
     // TODO 4.e: muestra una tabla con el resultado de cada fichero y una fila TOTAL
     //  (líneas, palabras y caracteres sumados). Comprueba que r1 y r2 coinciden.
 
+    println("\n" + "=".repeat(85))
+    println("%-15s %12s %12s %15s %20s".format("FICHERO", "LÍNEAS", "PALABRAS", "CARACTERES", "MÁS FRECUENTE"))
+    println("-".repeat(85))
+
+    var totalLineas = 0L
+    var totalPalabras = 0L
+    var totalCaracteres = 0L
+
+    r1.forEach { res ->
+        println("%-15s %12d %12d %15d %20s".format(res.fichero, res.lineas, res.palabras, res.caracteres, res.masFrecuente))
+        totalLineas += res.lineas
+        totalPalabras += res.palabras
+        totalCaracteres += res.caracteres
+    }
+
+    println("-".repeat(85))
+    println("%-15s %12d %12d %15d %20s".format("TOTAL", totalLineas, totalPalabras, totalCaracteres, "N/A"))
+    println("=".repeat(85))
+
+    if (r1 == r2) {
+        println(" Verificación CORRECTA: Los modos secuencial y concurrente coinciden exactamente.")
+    } else {
+        println(" ERROR: Los resultados de secuencial y concurrente difieren.")
+    }
     println("Secuencial:  $t1")
     println("Concurrente: $t2")
     // Práctica 4.f: ejecútalo tres veces y calcula la aceleración t1 / t2
